@@ -41,7 +41,7 @@ class _O{
     this.name = "O";
     this.shape = [[0, 0], [0, 1], [1, 0], [1, 1]];
     this.now = [[0, 4 + 0], [0, 4 + 1], [1, 4 + 0], [1, 4 + 1]];
-    this.check_down = [[1, 4 + 0], [1, 4 + 1]];
+    this.check_down = [[1, 4], [1, 5]];
     this.check_left = [[0, 4], [1, 4]];
     this.check_right = [[0, 5], [1, 5]];
   }
@@ -86,12 +86,12 @@ function board(canvas){
     ctx.fillStyle = "white";
     for(var i = 0; i <= 400; i+=20){
       for(var j = 0; j <= 200; j+=20){
-        ctx.fillRect(j, i + 1, 19, 19);
+        ctx.fillRect(j + 1, i + 1, 19, 19);
       }
     }
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, 200, 1);
-    ctx.fillRect(0, 0, 1, 400);
+    //ctx.fillRect(0, 0, 200, 1);
+    ctx.fillRect(200, 0, 1, 400);
     ctx.fillRect(0, 400, 200, 1);
   }
   for(var i = 0; i < 20; i++) map[i] = new Array(10);
@@ -101,7 +101,12 @@ function board(canvas){
 function fall(canvas){
   for(var i = 0; i < block.now.length; i++) if(block.now[i][0] + 1 == 20) return first_block_fall(canvas);
   for(var i = 0; i < block.check_down.length; i++){
-    if(map[block.check_down[i][0] + 1][block.check_down[i][1]] == 1) return first_block_fall(canvas);
+    if(map[block.check_down[i][0] + 1][block.check_down[i][1]] == 1) {
+      console.log("hall");
+      console.log(block.check_down[i][0] + 1);
+      console.log(block.check_down[i][1]);
+      return first_block_fall(canvas);
+    }
     else block.check_down[i][0] += 1;
   }
 
@@ -109,17 +114,17 @@ function fall(canvas){
   ctx.fillStyle = "white";
   for(var i = 0; i < block.now.length; i++){
     map[block.now[i][0]][block.now[i][1]] = 0;
-    ctx.fillRect(block.now[i][1] * 20, block.now[i][0] * 20 + 1, 19, 19);
+    ctx.fillRect(block.now[i][1] * 20 + 1, block.now[i][0] * 20 + 1, 19, 19);
   }
   ctx.fillStyle = "green";
   for(var i = 0; i < block.now.length; i++){
     map[block.now[i][0] + 1][block.now[i][1]] = 1;
     block.now[i][0] += 1;
-    ctx.fillRect(block.now[i][1] * 20, block.now[i][0] * 20 + 1, 19, 19);
+    ctx.fillRect(block.now[i][1] * 20 + 1, block.now[i][0] * 20 + 1, 19, 19);
   }
   //console.log(map[0]);
   //console.log(block.now)
-  setTimeout(fall, 100, canvas);
+  setTimeout(fall, 500, canvas);
 }
 
 function first_block_fall(canvas){
@@ -135,26 +140,33 @@ function first_block_fall(canvas){
   ctx.fillStyle = "green";
   for(var i = 0; i < block.now.length; i++){
     map[block.now[i][0]][block.now[i][1]] = 1;
-    ctx.fillRect(block.now[i][1] * 20, block.now[i][0] * 20 + 1, 19, 19);
+    ctx.fillRect(block.now[i][1] * 20 + 1, block.now[i][0] * 20 + 1, 19, 19);
   }
-  setTimeout(fall, 100, canvas);
+  console.log(map);
+  setTimeout(fall, 500, canvas);
 }
 
 function key_down(e){
   switch(e.keyCode) {
     case 37: //left
-      for(var i = 0; i < block.check_left.length; i++) if(map[block.check_left[i][0][block.check_left[i][1]] - 1] == 1 || block.check_left[i][1] - 1 < 0) return;
+      for(var i = 0; i < block.check_left.length; i++) if(map[block.check_left[i][0][block.check_left[i][1]] - 1] == 1) return;
+      for(var i = 0; i < block.now.length; i++) if(block.now[i][1] - 1 < 0) return;
+
+      for(var i = 0; i < block.check_down.length; i++) block.check_down[i][1] -= 1;
+      for(var i = 0; i < block.check_left.length; i++) block.check_left[i][1] -= 1;
+      for(var i = 0; i < block.check_right.length; i++) block.check_right[i][1] -= 1;
+
       var ctx = document.getElementById('canvas').getContext('2d');
       ctx.fillStyle = "white";
       for(var i = 0; i < block.now.length; i++){
         map[block.now[i][0]][block.now[i][1]] = 0;
-        ctx.fillRect(block.now[i][1] * 20, block.now[i][0] * 20 + 1, 19, 19);
+        ctx.fillRect(block.now[i][1] * 20 + 1, block.now[i][0] * 20 + 1, 19, 19);
       }
       ctx.fillStyle = "green";
       for(var i = 0; i < block.now.length; i++){
         map[block.now[i][0]][block.now[i][1] - 1] = 1;
         block.now[i][1] -= 1;
-        ctx.fillRect(block.now[i][1] * 20, block.now[i][0] * 20 + 1, 19, 19);
+        ctx.fillRect(block.now[i][1] * 20 + 1, block.now[i][0] * 20 + 1, 19, 19);
       }
       break;
     case 38: //up
