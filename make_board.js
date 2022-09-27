@@ -133,12 +133,12 @@ function fall(){
   }
   //console.log(map[0]);
   //console.log(block.now)
-  setTimeout(fall, 100, canvas);
+  setTimeout(fall, 500, canvas);
 }
 
 function first_block_fall(){
-  block = new piece[Math.floor(Math.random() * 7)]();
-  console.log(block.name)
+  block = new piece[Math.floor(Math.random() * piece.length)]();
+  console.log(piece.length)
   for(var i = 0; i < block.now.length; i++){
     if(map[block.now[i][0]][block.now[i][1]] == 1){
       console.log("end!");
@@ -200,7 +200,25 @@ function key_down(e){
       }
       break;
     case 40: //down
+      for(var i = 0; i < block.check_down.length; i++) if(map[block.check_down[i][0] + 1][block.check_down[i][1]] == 1) return;
+      for(var i = 0; i < block.now.length; i++) if(block.now[i][0] + 1 == 20) return;
 
+      for(var i = 0; i < block.check_down.length; i++) block.check_down[i][0] += 1;
+      for(var i = 0; i < block.check_left.length; i++) block.check_left[i][0] += 1;
+      for(var i = 0; i < block.check_right.length; i++) block.check_right[i][0] += 1;
+
+      var ctx = document.getElementById('canvas').getContext('2d');
+      ctx.fillStyle = "white";
+      for(var i = 0; i < block.now.length; i++){
+        map[block.now[i][0]][block.now[i][1]] = 0;
+        ctx.fillRect(block.now[i][1] * 20 + 1, block.now[i][0] * 20 + 1, 19, 19);
+      }
+      ctx.fillStyle = "green";
+      for(var i = 0; i < block.now.length; i++){
+        block.now[i][0] += 1;
+        map[block.now[i][0]][block.now[i][1]] = 1;
+        ctx.fillRect(block.now[i][1] * 20 + 1, block.now[i][0] * 20 + 1, 19, 19);
+      }
       break;
   }
 }
@@ -214,7 +232,6 @@ function check_line(){
       break;
     }
     if(chk){
-      console.log("dlec");
       score += 1;
       for(var k = i; k >= 1; k--){
         for(var j = 0; j < 10; j++){
@@ -227,6 +244,7 @@ function check_line(){
           }
         }
       }
+      i++;
     }
   }
 }
